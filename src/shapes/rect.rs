@@ -1,10 +1,11 @@
-use std::fmt::Display;
+use std::{fmt::Display, str::FromStr};
 
 use super::{
     area::Area,
     collisions::{Contains, Points},
 };
 
+#[derive(Debug)]
 pub struct Rect {
     pub x: f64,
     pub y: f64,
@@ -43,5 +44,22 @@ impl Display for Rect {
 impl Area for Rect {
     fn area(&self) -> f64 {
         return self.height * self.width;
+    }
+}
+
+impl FromStr for Rect {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts = s.split(" ").collect::<Vec<_>>();
+        if parts.len() != 4 {
+            return Err(anyhow::anyhow!("bad rectangle from str"));
+        }
+        return Ok(Rect {
+            x: parts[0].parse()?,
+            y: parts[1].parse()?,
+            width: parts[2].parse()?,
+            height: parts[3].parse()?,
+        });
     }
 }
